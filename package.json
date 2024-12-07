@@ -19,9 +19,11 @@
     "@clerk/clerk-expo": "^2.3.11",
     "@expo/vector-icons": "^14.0.4",
     "@react-native-async-storage/async-storage": "1.23.1",
+    "@react-native-picker/picker": "2.9.0",
     "@react-navigation/bottom-tabs": "^7.0.0",
     "@react-navigation/native": "^7.0.0",
     "expo": "~52.0.11",
+    "expo-av": "~15.0.1",
     "expo-blur": "~14.0.1",
     "expo-constants": "~17.0.3",
     "expo-font": "~13.0.1",
@@ -31,6 +33,7 @@
     "expo-linking": "~7.0.3",
     "expo-router": "~4.0.9",
     "expo-secure-store": "^14.0.0",
+    "expo-speech": "~13.0.0",
     "expo-splash-screen": "~0.29.13",
     "expo-status-bar": "~2.0.0",
     "expo-symbols": "~0.2.0",
@@ -48,7 +51,8 @@
     "react-native-toast-message": "^2.2.1",
     "react-native-web": "~0.19.13",
     "react-native-webview": "13.12.2",
-    "tailwindcss": "^3.4.15"
+    "tailwindcss": "^3.4.15",
+    "zustand": "^5.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
