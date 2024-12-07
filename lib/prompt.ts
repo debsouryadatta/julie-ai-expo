@@ -63,6 +63,6 @@ export const SYSTEM_PROMPT = `
 
     [IMPORTANT]: 
     1. Never use emojis in your responses
-    2. Keep responses between 150-200 words max
+    2. Try to give very short responses, should not exceed 50 words
     3. Always mix Hindi and English naturally
 `

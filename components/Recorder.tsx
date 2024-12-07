@@ -10,7 +10,8 @@ import { sendToGpt } from '@/lib/llm';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Recorder() {
-  const { isRecording, setIsRecording, recording, setRecording, messages, setMessages, groqApiKey, elevenLabsApiKey } = useGlobalStore();
+  const { isRecording, setIsRecording, recording, setRecording, messages, setMessages, groqApiKey, elevenLabsApiKey, setAiResponseLoading } = useGlobalStore();
+  const [activeSound, setActiveSound] = useState<Audio.Sound | null>(null);
 
   const handlePress = () => {
     if(!groqApiKey || !elevenLabsApiKey) {
@@ -86,7 +87,12 @@ export default function Recorder() {
         window.speechSynthesis.pause();
         window.speechSynthesis.cancel();
       } else {
-        Speech.stop();
+        // Speech.stop();
+        if (activeSound) {
+          await activeSound.stopAsync();
+          await activeSound.unloadAsync();
+          setActiveSound(null);
+        }
       }
     }
     try {
@@ -113,7 +119,7 @@ export default function Recorder() {
 
   // Stop recording
   const stopRecording = async () => {
-    
+    setAiResponseLoading(true);
     try {
       setIsRecording(false);
       await recording?.stopAndUnloadAsync();
@@ -147,8 +153,47 @@ export default function Recorder() {
         type: 'error',
         text1: 'Failed to stop recording',
       })
+    } finally {
+      setAiResponseLoading(false);
     }
   };
+
+    // Speak the response given by llm
+    // const speakText = async (text: string) => {
+    //   setAiResponseLoading(false);
+    //   try {
+    //     if (Platform.OS === 'ios') {
+    //       const options = {
+    //         voice: "com.apple.ttsbundle.Samantha-compact",
+    //         language: "en-US",
+    //         pitch: 1.5,
+    //         rate: 1,
+    //       };
+    //       Speech.speak(text, options);
+    //     } else if (Platform.OS === 'android') {
+    //       const options = {
+    //         language: "en-US",
+    //         pitch: 1.5,
+    //         rate: 1,
+    //       };
+    //       Speech.speak(text, options);
+    //     } else if (Platform.OS === 'web') {
+    //       // Web Speech API
+    //       const utterance = new SpeechSynthesisUtterance(text);
+    //       utterance.lang = 'en-US';
+    //       utterance.pitch = 1.5;
+    //       utterance.rate = 1;
+    //       window.speechSynthesis.speak(utterance);
+    //     }
+    //   } catch (error) {
+    //     console.log('Error speaking text:', error);
+    //     Toast.show({
+    //       type: 'error',
+    //       text1: 'Speech Error',
+    //       text2: 'Unable to speak the text'
+    //     });
+    //   }
+    // };  
 
   const speakText = async (text: string) => {
     try {
@@ -208,11 +253,13 @@ export default function Recorder() {
         { uri: audioUri },
         { shouldPlay: true }
       );
+      setActiveSound(sound);
 
       sound.setOnPlaybackStatusUpdate(async (status) => {
         if (!status.isLoaded) return;
         if (status.didJustFinish) {
           await sound.unloadAsync();
+          setActiveSound(null);
         }
       });
     } catch (error) {
