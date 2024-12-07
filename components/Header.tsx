@@ -4,21 +4,24 @@ import { Ionicons } from '@expo/vector-icons';
 import { useGlobalStore } from '@/store/useStore';
 import ApiKeysDialog from './ApiKeysDialog';
 import SettingsDialog from './SettingsDialog';
+import { useRouter } from 'expo-router';
 
 export default function Header() {
   const { setIsApiKeysDialogOpen, setIsSettingsDialogOpen } = useGlobalStore();
+  const router = useRouter();
 
   return (
     <>
       <View className="flex-row items-center justify-between px-4 py-3 bg-black border-b border-[#333333]">
         <View className="flex-row items-center">
+          <Ionicons className='-ml-2 mr-2' name='chevron-back' size={24} color='white' onPress={() => router.navigate('/')} />
           <View className="h-10 w-10 rounded-full overflow-hidden mr-3">
             <Image
               source={{ uri: "https://res.cloudinary.com/diyxwdtjd/image/upload/v1727810716/projects/julie_gez2o2.png" }}
               className="h-full w-full"
             />
           </View>
-          <Text className="text-white text-xl font-semibold">Julie ♥</Text>
+          <Text className="text-white text-xl font-semibold">Julie ❣︎</Text>
         </View>
         <View className="flex-row">
           <TouchableOpacity 

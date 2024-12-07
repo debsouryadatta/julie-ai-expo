@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { View, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import Header from '../../components/Header';
 import Message from '../../components/Message';
 import Recorder from '../../components/Recorder';
@@ -31,28 +32,37 @@ export default function Home() {
     };
     getMessages();
   }, [])
-  
 
   return (
-    <KeyboardAvoidingView 
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      className="flex-1 bg-[#14141A] h-screen w-screen"
+    <LinearGradient
+      colors={['#111111', '#111232', '#4B6BFB']}
+      className="flex-1"
     >
-      <Header />
-      <ScrollView 
-        ref={scrollViewRef}
-        className="flex-1 px-4 pt-4"
-        contentContainerStyle={{ paddingBottom: 20 }}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        className="flex-1 bg-[#14141A] h-screen w-screen"
       >
-        {messages.map((message, index) => (
-          <Message
-            key={index}
-            text={message.content}
-            isUser={message.role === "user"}
-          />
-        ))}
-      </ScrollView>
-      <Recorder />
-    </KeyboardAvoidingView>
+        <Header />
+        <LinearGradient
+          colors={['#111111', '#111232', '#4B6BFB']}
+          className="flex-1"
+        >
+          <ScrollView
+            ref={scrollViewRef}
+            className="flex-1 px-4 pt-4"
+            contentContainerStyle={{ paddingBottom: 20 }}
+          >
+            {messages.map((message, index) => (
+              <Message
+                key={index}
+                text={message.content}
+                isUser={message.role === "user"}
+              />
+            ))}
+          </ScrollView>
+        </LinearGradient>
+        <Recorder />
+      </KeyboardAvoidingView>
+    </LinearGradient>
   );
 }

@@ -3,11 +3,8 @@ import { Link, SplashScreen } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useFonts } from 'expo-font';
 import { useEffect } from 'react';
-import { useAuth } from '@clerk/clerk-expo'
 
 export default function WelcomeScreen() {
-  const { signOut } = useAuth()
-
   const [loaded, error] = useFonts({
     'SpaceMono-Regular': require('../../assets/fonts/SpaceMono-Regular.ttf'),
     'LuckiestGuy-Regular': require('../../assets/fonts/LuckiestGuy-Regular.ttf'),
@@ -40,9 +37,9 @@ export default function WelcomeScreen() {
             <View className="">
               <Image
                 source={{
-                  uri: "https://res.cloudinary.com/diyxwdtjd/image/upload/v1732894584/projects/chat-icon_axjrau.png",
+                  uri: "https://res.cloudinary.com/diyxwdtjd/image/upload/v1727810716/projects/julie_gez2o2.png",
                 }}
-                className="w-48 h-48 mb-[-30px]"
+                className="w-48 h-48 mb-10"
                 resizeMode="contain"
               />
             </View>
@@ -55,18 +52,18 @@ export default function WelcomeScreen() {
                   style={{ fontFamily: 'LuckiestGuy-Regular' }} 
                   className="text-white text-4xl"
                 >
-                  SnapWire
+                  Julie Ai ❣
                 </Text>
               </View>
               <Text 
                 className="text-gray-400 text-base text-center"
               >
-                Connect with friends, share moments, and explore stories
+                Your AI bestie who happens to know tech!
               </Text>
             </View>
 
             {/* Get Started Button */}
-            <Link href="/sign-up" asChild>
+            <Link href="/home" asChild>
               <Pressable className="w-full bg-[#4B6BFB] py-4 rounded-xl mt-12">
                 <Text 
                   className="text-white text-center text-lg font-extrabold"
@@ -75,23 +72,6 @@ export default function WelcomeScreen() {
                 </Text>
               </Pressable>
             </Link>
-            <Link href="/sign-in" asChild>
-              <Pressable className="w-full bg-[#4B6BFB] py-4 rounded-xl mt-6">
-                <Text 
-                  className="text-white text-center text-lg font-extrabold"
-                >
-                  Sign In
-                </Text>
-              </Pressable>
-            </Link>
-
-              <Pressable onPress={() => signOut()} className="w-full bg-[#4B6BFB] py-4 rounded-xl mt-6">
-                <Text 
-                  className="text-white text-center text-lg font-extrabold"
-                >
-                  Sign out
-                </Text>
-              </Pressable>
           </View>
         </View>
       </LinearGradient>

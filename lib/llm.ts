@@ -9,13 +9,13 @@ export const sendToGpt = async (messages: Message[], groqApiKey: string) => {
     console.log("modifiedMessages", modifiedMessages);
     
     const body = {
-        model: "llama3-8b-8192",
+        model: "llama-3.3-70b-versatile",
         messages: modifiedMessages,
-        temperature: 0.7,
-        max_tokens: 1024,
-        top_p: 1,
-        frequency_penalty: 0,
-        presence_penalty: 0,
+        temperature: 0.75,
+        max_tokens: 300,
+        top_p: 0.9,
+        frequency_penalty: 0.3,
+        presence_penalty: 0.6,
     };
     try {
         const response = await fetch(

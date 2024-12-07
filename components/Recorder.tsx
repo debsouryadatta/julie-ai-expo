@@ -13,6 +13,13 @@ export default function Recorder() {
   const { isRecording, setIsRecording, recording, setRecording, messages, setMessages, groqApiKey, elevenLabsApiKey } = useGlobalStore();
 
   const handlePress = () => {
+    if(!groqApiKey || !elevenLabsApiKey) {
+      Toast.show({
+        type: 'error',
+        text1: 'Please enter the API Keys',
+      })
+      return;
+    }
     setIsRecording(!isRecording);
     if (isRecording) {
       stopRecording();
@@ -72,18 +79,15 @@ export default function Recorder() {
 
   // Start recording
   const startRecording = async () => {
-    if(!groqApiKey || !elevenLabsApiKey) {
-      Toast.show({
-        type: 'error',
-        text1: 'Please enter the API Keys',
-      })
-      return;
-    }
     const hasPermission = await getMicrophonePermission();
     if (!hasPermission) return;
     if (recording) {
-      window.speechSynthesis.pause();
-      window.speechSynthesis.cancel();
+      if (Platform.OS === 'web') {
+        window.speechSynthesis.pause();
+        window.speechSynthesis.cancel();
+      } else {
+        Speech.stop();
+      }
     }
     try {
       await Audio.setAudioModeAsync({
@@ -109,6 +113,7 @@ export default function Recorder() {
 
   // Stop recording
   const stopRecording = async () => {
+    
     try {
       setIsRecording(false);
       await recording?.stopAndUnloadAsync();
@@ -140,46 +145,87 @@ export default function Recorder() {
       console.log("Failed to stop Recording", error);
       Toast.show({
         type: 'error',
-        text2: 'Failed to stop recording',
+        text1: 'Failed to stop recording',
       })
     }
   };
 
-  // Speak the response given by llm
   const speakText = async (text: string) => {
     try {
-      if (Platform.OS === 'ios') {
-        const options = {
-          voice: "com.apple.ttsbundle.Samantha-compact",
-          language: "en-US",
-          pitch: 1.5,
-          rate: 1,
-        };
-        Speech.speak(text, options);
-      } else if (Platform.OS === 'android') {
-        const options = {
-          language: "en-US",
-          pitch: 1.5,
-          rate: 1,
-        };
-        Speech.speak(text, options);
-      } else if (Platform.OS === 'web') {
-        // Web Speech API
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = 'en-US';
-        utterance.pitch = 1.5;
-        utterance.rate = 1;
-        window.speechSynthesis.speak(utterance);
+      const voiceId = "cgSgspJ2msm6clMCkdW9"; // Jessica voice
+      const url = `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`;
+
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Accept': 'audio/mpeg',
+          'Content-Type': 'application/json',
+          'xi-api-key': elevenLabsApiKey,
+        },
+        body: JSON.stringify({
+          text,
+          model_id: "eleven_turbo_v2_5",
+          voice_settings: {
+            stability: 0.5,
+            similarity_boost: 0.75,
+            language_code: "hi",
+          }
+        }),
+      });
+
+      if (!response.ok) {
+        console.error("Error fetching audio:", response.statusText);
+        Toast.show({
+          type: 'error',
+          text1: 'ElevenLabs Error',
+          text2: 'Failed to generate speech'
+        });
+        return;
+      }
+
+      if (Platform.OS === 'web') {
+        const audioBlob = await response.blob();
+        const audioUri = URL.createObjectURL(audioBlob);
+        const { sound } = await Audio.Sound.createAsync(
+          { uri: audioUri },
+          { shouldPlay: true }
+        );
+        
+        // Clean up the sound object when done
+        sound.setOnPlaybackStatusUpdate(async (status) => {
+          if (!status.isLoaded) return;
+          if (status.didJustFinish) {
+            await sound.unloadAsync();
+          }
+        });
+      } else {
+        // For iOS and Android, we'll use the response directly
+        const audioBuffer = await response.arrayBuffer();
+        const audioBase64 = Buffer.from(audioBuffer).toString('base64');
+        const audioUri = `data:audio/mpeg;base64,${audioBase64}`;
+        
+        const { sound } = await Audio.Sound.createAsync(
+          { uri: audioUri },
+          { shouldPlay: true }
+        );
+        
+        // Clean up the sound object when done
+        sound.setOnPlaybackStatusUpdate(async (status) => {
+          if (!status.isLoaded) return;
+          if (status.didJustFinish) {
+            await sound.unloadAsync();
+          }
+        });
       }
     } catch (error) {
-      console.log('Error speaking text:', error);
+      console.error("Error in text-to-speech:", error);
       Toast.show({
         type: 'error',
         text1: 'Speech Error',
-        text2: 'Unable to speak the text'
+        text2: 'Unable to play audio'
       });
     }
-  };  
+  }
 
   return (
     <View className="px-4 py-4 bg-[#14141A]">
