@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "expo-app",
-    "slug": "expo-app",
+    "name": "Julie",
+    "slug": "Julie",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/julie_gez2o2.png",
@@ -9,7 +9,8 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.debsouryadatta.julie"
     },
     "android": {
       "permissions": [
@@ -18,7 +19,6 @@
         "MODIFY_AUDIO_SETTINGS"
       ],
       "softwareKeyboardLayoutMode": "pan",
-      "usesCleartextTraffic": true,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/julie_gez2o2.png",
         "backgroundColor": "#ffffff"
@@ -51,7 +51,7 @@
         "origin": false
       },
       "eas": {
-        "projectId": "57bbbd19-1b9a-4259-9987-e20fd1d7d7d5"
+        "projectId": "b43f633f-ab0f-4166-b787-4ebdc114c888"
       }
     }
   }
