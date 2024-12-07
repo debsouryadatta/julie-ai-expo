@@ -183,40 +183,38 @@ export default function Recorder() {
         return;
       }
 
+      let audioUri: string;
+
       if (Platform.OS === 'web') {
         const audioBlob = await response.blob();
-        const audioUri = URL.createObjectURL(audioBlob);
-        const { sound } = await Audio.Sound.createAsync(
-          { uri: audioUri },
-          { shouldPlay: true }
-        );
-        
-        // Clean up the sound object when done
-        sound.setOnPlaybackStatusUpdate(async (status) => {
-          if (!status.isLoaded) return;
-          if (status.didJustFinish) {
-            await sound.unloadAsync();
-          }
-        });
+        audioUri = URL.createObjectURL(audioBlob);
       } else {
-        // For iOS and Android, we'll use the response directly
-        const audioBuffer = await response.arrayBuffer();
-        const audioBase64 = Buffer.from(audioBuffer).toString('base64');
-        const audioUri = `data:audio/mpeg;base64,${audioBase64}`;
+        // For iOS and Android - using chunked processing
+        const arrayBuffer = await response.arrayBuffer();
+        const chunks = [];
+        const chunkSize = 8192; // Process 8KB at a time
+        const uint8Array = new Uint8Array(arrayBuffer);
         
-        const { sound } = await Audio.Sound.createAsync(
-          { uri: audioUri },
-          { shouldPlay: true }
-        );
+        for (let i = 0; i < uint8Array.length; i += chunkSize) {
+          const chunk = uint8Array.slice(i, i + chunkSize);
+          chunks.push(String.fromCharCode.apply(null, Array.from(chunk)));
+        }
         
-        // Clean up the sound object when done
-        sound.setOnPlaybackStatusUpdate(async (status) => {
-          if (!status.isLoaded) return;
-          if (status.didJustFinish) {
-            await sound.unloadAsync();
-          }
-        });
+        const base64String = btoa(chunks.join(''));
+        audioUri = `data:audio/mpeg;base64,${base64String}`;
       }
+
+      const { sound } = await Audio.Sound.createAsync(
+        { uri: audioUri },
+        { shouldPlay: true }
+      );
+
+      sound.setOnPlaybackStatusUpdate(async (status) => {
+        if (!status.isLoaded) return;
+        if (status.didJustFinish) {
+          await sound.unloadAsync();
+        }
+      });
     } catch (error) {
       console.error("Error in text-to-speech:", error);
       Toast.show({

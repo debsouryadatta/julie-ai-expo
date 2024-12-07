@@ -1,13 +1,22 @@
+import { Platform } from "react-native";
+
 export const sendAudioToWhisper = async (uri: string, groqApiKey: string) => {
   console.log("Groq API Key:", groqApiKey);
   
   try {
-    // Create blob from uri
-    const response = await fetch(uri);
-    const blob = await response.blob();
-
-    const formData = new FormData();
-    formData.append("file", blob, "recording.wav");
+    const formData: any = new FormData();
+    if(Platform.OS === 'android' || Platform.OS === 'ios') {
+      formData.append("file", {
+        uri: uri,
+        type: 'audio/wav',
+        name: 'recording.wav',
+      });
+    } else {
+      // Create blob from uri
+      const response = await fetch(uri);
+      const blob = await response.blob();
+      formData.append("file", blob, "recording.wav");
+    }
     formData.append("model", "whisper-large-v3-turbo");
     formData.append("temperature", "0");
     formData.append("response_format", "json");
