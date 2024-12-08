@@ -9,21 +9,14 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.debsouryadatta.julie"
+      "supportsTablet": true
     },
     "android": {
-      "permissions": [
-        "INTERNET",
-        "RECORD_AUDIO",
-        "MODIFY_AUDIO_SETTINGS"
-      ],
-      "softwareKeyboardLayoutMode": "pan",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/julie_gez2o2.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.debsouryadatta.julie"
+      "package": "com.debsouryadatta.Julie"
     },
     "web": {
       "bundler": "metro",
@@ -51,7 +44,7 @@
         "origin": false
       },
       "eas": {
-        "projectId": "b43f633f-ab0f-4166-b787-4ebdc114c888"
+        "projectId": "fcdb76a3-44df-4f62-b992-abb59258eda7"
       }
     }
   }
